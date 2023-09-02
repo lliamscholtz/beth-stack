@@ -16,18 +16,24 @@ app.use(html())
     .get('/', ({ html }) =>
         html(
             <BaseHtml>
-                <body
-                    class="flex w-full h-screen justify-center items-center"
-                    hx-get="/button"
-                    hx-trigger="load"
-                    hx-swap="innerHTML"
-                />
+                <body class="flex w-full h-screen justify-center items-center">
+                    <main hx-get="/counter" hx-trigger="load" hx-swap="innerHTML" />
+                </body>
             </BaseHtml>
         )
     )
-    .get('/button', () => <Button />)
+    .get('/counter', () => (
+        <div>
+            <Button />
+            <Reset />
+        </div>
+    ))
     .post('/click', () => {
         count++;
+        return <Button />;
+    })
+    .post('/reset', () => {
+        count = 0;
         return <Button />;
     })
     .listen(3000);
@@ -55,9 +61,23 @@ const BaseHtml = ({ children }: elements.Children) => `
 
 // Components
 
+function Reset() {
+    return (
+        <button
+            class="bg-red-600 text-white px-6 py-2 rounded-md ml-2"
+            hx-post="/reset"
+            hx-target="#counter"
+            hx-swap="outerHTML"
+        >
+            Reset
+        </button>
+    );
+}
+
 function Button() {
     return (
         <button
+            id="counter"
             class="bg-slate-900 text-white px-6 py-2 rounded-md"
             hx-post="/click"
             hx-swap="outerHTML"
