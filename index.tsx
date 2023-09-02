@@ -5,6 +5,7 @@ import * as elements from 'typed-html';
 // State
 
 let count = 0;
+let reload = 0;
 
 // App
 
@@ -22,12 +23,18 @@ app.use(html())
             </BaseHtml>
         )
     )
-    .get('/counter', () => (
-        <div>
-            <Button />
-            <Reset />
-        </div>
-    ))
+    .get('/counter', () => {
+        reload++;
+        return (
+            <div>
+                <button class="bg-slate-400 text-white px-6 py-2 rounded-md mr-2">
+                    Reload ({reload})
+                </button>
+                <Button />
+                <Reset />
+            </div>
+        );
+    })
     .post('/click', () => {
         count++;
         return <Button />;
@@ -82,7 +89,7 @@ function Button() {
             hx-post="/click"
             hx-swap="outerHTML"
         >
-            Click Me ({count})
+            Increment ({count})
         </button>
     );
 }
